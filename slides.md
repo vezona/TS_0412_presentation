@@ -27,13 +27,38 @@ mdc: true
 ---
 transition: slide-left
 ---
+<div class="text-3em text-center text-sky-600">寫TS之前</div>
+  <img class="scale-70 -translate-y-20" src="/img/easy.png"/>
+
+---
+transition: slide-left
+---
+<div class="text-3em text-center text-sky-600">寫TS期間</div>
+  <img class="scale-80 -translate-y-14 translate-x-30" src="/img/sad.jpg"/>
+
+---
+transition: slide-left
+---
+<div class="text-3em text-center text-sky-600">寫TS之後</div>
+  <img  class="scale-90 -translate-y-6 translate-x-34" src="/img/die.jpg"/>
 
 
-<div class="text-3em text-sky-600 mt-2">大綱</div>
+---
+transition: slide-left
+---
+<img  class="scale-220 translate-y-28 translate-x-75" src="/img/calm.jpeg"/>
+
+
+
+---
+transition: slide-left
+---
+
+<div class="text-2em text-sky-600">大綱</div>
 <ul class="text-2em mt-5 font-mono space-y-5">
-  <li> IIMT - 立即索引映射型別
+  <li> 遍歷物件(Iterate Object)
   </li>
-  <li> Iterate Object
+  <li> 立即索引映射型別(IIMT)
   </li>
   <li>依據物件中特定屬性值，取得相對應屬性
   </li>
@@ -44,9 +69,171 @@ transition: slide-left
 ---
 transition: slide-left
 ---
-<div class="text-3em text-sky-600 mt-2">IIMT - 立即索引映射型別</div>
+<div class="text-2.5em text-sky-600 mt-2">遍歷物件(Iterate Object)</div>
+<div grid="~ cols-2 gap-3" m="t-2">
+
+  ```ts
+  const webCase = ref({
+    baseInfo:{...},
+    areaInfo:{
+      buildPin: null,
+      buildSquareMetre: null,
+      mainPin: null,
+      mainSquareMetre: null,
+      attachedPin: null,
+      attachedSquareMetre: null,
+      publicPin: null,
+      publicSquareMetre: null,
+    },
+    communityInfo:{...},
+    pictureInfo:{...},
+    publishStateInfo:{...}
+  })
+  ```
+
+  <div>
+    <p v-click class="text-trueGray-500 text-xl mt-0!">單位切換時，清空 areaInfo 內所有屬性的 value</p>
+    <a v-after href="https://007-s2.houseprice.tw/inventory/inventory-edit">007-s2 刊登頁</a>
+    <img
+      v-after
+      class="scale-65 -translate-y-20 -translate-x-12"
+      src="/img/switchUnit.jpg"
+      alt="switchUnit"
+    />
+  </div>
+</div>
+
+---
+transition: slide-left
+---
+
+<div class="text-2.5em text-sky-600 mt-2">遍歷物件(Iterate Object) : JS</div>
+
+<div grid="~ cols-2 gap-3" m="t-2">
+
+<div class="mt-12">
+
+  ```ts
+   areaInfo:{
+      buildPin: 12,
+      buildSquareMetre: 22,
+      mainPin: 12,
+      mainSquareMetre: 34,
+      attachedPin: 23,
+      attachedSquareMetre: 12,
+      publicPin: 56,
+      publicSquareMetre: 678,
+    }
+  ```
+</div>
+
+
+  <div>
+  <div v-click>
+  <p class="text-2xl">for...in</p>
+
+  ```js
+  for(let key in areaInfo){
+    areaInfo[key] = null
+  }
+
+  ```
+  </div>
+
+  <div v-click class="mt-2.5em">
+    <p class="text-2xl">object.keys</p>
+
+  ```js
+  Object.keys(areaInfo).forEach((key)=>{
+    areaInfo[key] = null
+  })
+
+  ```
+  
+  </div>
+
+
+  </div>
+</div>
+
+
+
+---
+transition: slide-left
+---
+
+<div class="text-2.5em text-sky-600 mt-2">遍歷物件(Iterate Object)：TS錯誤</div>
+
+<div class="mt-10">
+
+```ts twoslash
+import {areaInfo} from './public/data/areaInfo'
+
+Object.keys(areaInfo).forEach((key)=>{
+  areaInfo[key] = null
+})
+```
+</div>
+
+<p class="text-1.6em text-white text-center bg-red-600 py-4 font-bold">TS程式設計中，Object.keys 返還的是字串陣列，而非屬性索引陣列</p>
+
+---
+transition: slide-left
+---
+<div class="text-2.5em text-sky-600 mt-2">解法一：強硬斷言as</div>
+<br>
+<br>
+
+```ts {all|3,4|5,6,7} twoslash 
+import { areaInfo } from './public/data/areaInfo'
+
+const keys = Object.keys(areaInfo) as Array<keyof typeof areaInfo>;
+// ['buildPin', 'buildSquareMetre', 'mainPin', ......]
+
+keys.forEach((key)=>{
+  areaInfo[key] = null
+})
+```
+
+---
+transition: slide-left
+---
+
+<div class="text-2.5em text-sky-600 mt-2">解法二：自訂ObjectKeys方法</div>
+<br>
+
+
+```ts {all|1|2|all}
+const objectKeys = <T extends object>(obj: T): (keyof T)[] => {
+  return Object.keys(obj) as (keyof T)[];
+};
+
+```
+
+<br>
+
+
+<div v-click>
+
+```ts {} twoslash 
+import { areaInfo } from './public/data/areaInfo'
+import { objectKeys } from './snippets/objectKeys'
+
+objectKeys(areaInfo).forEach(key => {
+  areaInfo[key] = null
+});
+```
+</div>
+
+
+<!-- ----------------------------- 第二點 ---------------------------- -->
+---
+transition: slide-left
+---
+<div class="text-3em text-sky-600 mt-2">立即索引映射型別(IIMT)</div>
 <p class="text-trueGray-500 text-2xl">Immediately Indexed Mapped Type</p>
 <br>
+
 ```ts
 type SomeObject = {
   a: string;
@@ -66,6 +253,14 @@ type IIMT = {
 transition: slide-up
 transition: slide-left
 transition: fade-out
+
+// 頁面分割
+layout: two-cols
+layoutClass: gap-10
+
+// 頁面部分分割
+// <div grid="~ cols-2 gap-2" m="t-2">
+</div>
  -->
 
 ---

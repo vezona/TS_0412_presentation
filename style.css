@@ -1,5 +1,10 @@
 code[class*='language-'] {
     font-size: 1.5em;
+    white-space: break-spaces;
+}
+
+pre{
+    max-height: 380px;
 }
 
 .test{
